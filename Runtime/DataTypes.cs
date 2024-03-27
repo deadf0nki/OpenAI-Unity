@@ -98,6 +98,39 @@ namespace OpenAI
         public string User { get; set; }
         public string SystemFingerprint { get; set; }
     }
+    
+    public sealed class CreateChatCompletionRequest<T> where T : new()
+    {
+        public string Model { get; set; }
+        public List<ChatMessage> Messages { get; set; }
+        public float? Temperature { get; set; } = 1;
+        public int N { get; set; } = 1;
+        public bool Stream { get; set; } = false;
+        public string Stop { get; set; }
+        public int? MaxTokens { get; set; }
+        public float? PresencePenalty { get; set; } = 0;
+        public float? FrequencyPenalty { get; set; } = 0;
+        public Dictionary<string, string> LogitBias { get; set; }
+        public string User { get; set; }
+        public List<BaseFunction<T>> Functions { get; set; }
+        public string SystemFingerprint { get; set; }
+    }
+
+
+    public class BaseFunction<T> where T : new()
+    {
+        public  virtual string Name { get; }
+        public virtual string Description { get;  }
+        public T Parameters = new T();
+    }
+
+    public class FunctionObjectParameter<T> where T : new()
+    {
+        public virtual string Type { get; }
+        public virtual T Parameters => new T();
+    }
+    
+    
 
     public struct CreateChatCompletionResponse : IResponse
     {
@@ -112,11 +145,22 @@ namespace OpenAI
         public string SystemFingerprint { get; set; }
     }
     
+    
+
+    public struct FunctionResponse
+    {
+        public string Name { get; set; }
+        public string arguments { get; set; }
+    }
+
     public struct ChatChoice
     {
         public ChatMessage Message { get; set; }
         public ChatMessage Delta { get; set; }
-        public int? Index { get; set; }
+
+        public FunctionResponse FunctionCall { get; set; }
+
+    public int? Index { get; set; }
         public string FinishReason { get; set; }
         public string Logprobs { get; set; }
     }

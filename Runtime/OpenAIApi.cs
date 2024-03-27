@@ -77,7 +77,7 @@ namespace OpenAI
                 var asyncOperation = request.SendWebRequest();
 
                 while (!asyncOperation.isDone) await Task.Yield();
-                
+                Debug.Log(request.downloadHandler.text);
                 data = JsonConvert.DeserializeObject<T>(request.downloadHandler.text, jsonSerializerSettings);
             }
             
@@ -230,6 +230,14 @@ namespace OpenAI
             return await DispatchRequest<CreateChatCompletionResponse>(path, UnityWebRequest.kHttpVerbPOST, payload);
         }
         
+        public async Task<CreateChatCompletionResponse> CreateChatCompletion<T>(CreateChatCompletionRequest<T> request) where T : new()
+        {
+            var path = $"{BASE_PATH}/chat/completions";
+            var payload = CreatePayload(request);
+            
+            return await DispatchRequest<CreateChatCompletionResponse>(path, UnityWebRequest.kHttpVerbPOST, payload);
+        }
+        
         /// <summary>
         ///     Creates a chat completion request as in ChatGPT.
         /// </summary>
@@ -238,6 +246,15 @@ namespace OpenAI
         /// <param name="onComplete">Callback function that will be called when stream response is completed.</param>
         /// <param name="token">Cancellation token to cancel the request.</param>
         public void CreateChatCompletionAsync(CreateChatCompletionRequest request, Action<List<CreateChatCompletionResponse>> onResponse, Action onComplete, CancellationTokenSource token)
+        {
+            request.Stream = true;
+            var path = $"{BASE_PATH}/chat/completions";
+            var payload = CreatePayload(request);
+            
+            DispatchRequest(path, UnityWebRequest.kHttpVerbPOST, onResponse, onComplete, token, payload);
+        }
+
+ 		public void CreateChatCompletionAsync<T>(CreateChatCompletionRequest<T> request, Action<List<CreateChatCompletionResponse>> onResponse, Action onComplete, CancellationTokenSource token) where T : new() 
         {
             request.Stream = true;
             var path = $"{BASE_PATH}/chat/completions";
