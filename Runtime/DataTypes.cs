@@ -96,38 +96,27 @@ namespace OpenAI
         public float? FrequencyPenalty { get; set; } = 0;
         public Dictionary<string, string> LogitBias { get; set; }
         public string User { get; set; }
+        public List<BaseFunction> Functions { get; set; }
         public string SystemFingerprint { get; set; }
     }
     
-    public sealed class CreateChatCompletionRequest<T> where T : new()
+  
+
+
+    public class BaseFunction
     {
-        public string Model { get; set; }
-        public List<ChatMessage> Messages { get; set; }
-        public float? Temperature { get; set; } = 1;
-        public int N { get; set; } = 1;
-        public bool Stream { get; set; } = false;
-        public string Stop { get; set; }
-        public int? MaxTokens { get; set; }
-        public float? PresencePenalty { get; set; } = 0;
-        public float? FrequencyPenalty { get; set; } = 0;
-        public Dictionary<string, string> LogitBias { get; set; }
-        public string User { get; set; }
-        public List<BaseFunction<T>> Functions { get; set; }
-        public string SystemFingerprint { get; set; }
+        
+        public  virtual string Name { get; set; }
+        public virtual string Description { get; set; }
+        public virtual FunctionObjectParameter Parameters { get; set; }
     }
+    
+    
 
-
-    public class BaseFunction<T> where T : new()
+    public class FunctionObjectParameter
     {
-        public  virtual string Name { get; }
-        public virtual string Description { get;  }
-        public T Parameters = new T();
-    }
-
-    public class FunctionObjectParameter<T> where T : new()
-    {
-        public virtual string Type { get; }
-        public virtual T Parameters => new T();
+        public virtual string Type { get; set; }
+        public virtual object Properties { get; set; } 
     }
     
     
