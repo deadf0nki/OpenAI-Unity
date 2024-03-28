@@ -96,27 +96,32 @@ namespace OpenAI
         public float? FrequencyPenalty { get; set; } = 0;
         public Dictionary<string, string> LogitBias { get; set; }
         public string User { get; set; }
-        public List<BaseFunction> Functions { get; set; }
+        public List<BaseTool> Tools { get; set; }
+        public string ToolChoice { get; set; }
         public string SystemFingerprint { get; set; }
     }
-    
-  
 
 
+
+    public class BaseTool
+    {
+        public virtual string Type { get; set; }
+        public virtual BaseFunction Function { get; set; }
+    }
     public class BaseFunction
     {
-        
         public  virtual string Name { get; set; }
         public virtual string Description { get; set; }
         public virtual FunctionObjectParameter Parameters { get; set; }
+       
     }
-    
     
 
     public class FunctionObjectParameter
     {
         public virtual string Type { get; set; }
-        public virtual object Properties { get; set; } 
+        public virtual object Properties { get; set; }
+        public virtual List<string> Required { get; set; }
     }
     
     
@@ -139,7 +144,7 @@ namespace OpenAI
     public struct FunctionResponse
     {
         public string Name { get; set; }
-        public string arguments { get; set; }
+        public string Arguments { get; set; }
     }
 
     public struct ChatChoice
@@ -147,7 +152,7 @@ namespace OpenAI
         public ChatMessage Message { get; set; }
         public ChatMessage Delta { get; set; }
 
-        public FunctionResponse FunctionCall { get; set; }
+       
 
     public int? Index { get; set; }
         public string FinishReason { get; set; }
@@ -158,6 +163,13 @@ namespace OpenAI
     {
         public string Role { get; set; }
         public string Content { get; set; }
+        public List<ToolCall> ToolCalls { get; set; }
+    }
+
+    public struct ToolCall
+    {
+        public string Id { get; set; }
+        public FunctionResponse Function { get; set; }
     }
     
     #endregion
